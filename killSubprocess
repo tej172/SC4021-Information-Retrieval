@@ -1,0 +1,17 @@
+import psutil
+
+def kill_solr_processes():
+    # Iterate over all running processes
+    for proc in psutil.process_iter(['pid', 'name']):
+        try:
+            # Check if the process is related to Java (used by Solr)
+            if 'java' in proc.info['name'].lower():
+                print(f"Terminating Solr-related process: {proc.info['name']} (PID: {proc.info['pid']})")
+                proc.terminate()  # Terminate the process
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass  # Handle any exceptions if the process disappears or can't be accessed
+
+    print("Attempted to terminate all Solr-related processes.")
+
+# Call the function
+kill_solr_processes()

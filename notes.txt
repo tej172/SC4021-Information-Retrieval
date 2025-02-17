@@ -1,0 +1,51 @@
+Set Up:
+step 1: Download https://solr.apache.org/downloads.html Binary releases
+ensure that there is JAVA_HOME if not
+step 2: Download https://adoptium.net/download/
+step 3: open cmd type run: where java
+step 4: should see a path like: 'C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot\bin\java.exe'
+step 5: Copy everything before '\bin\java.exe', hence copy only: 'C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot'
+Replace the path with your actual Java path. 
+Use set for temporary setup or setx for permanent setup.
+step 6: for cmd set setx JAVA_HOME "C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot" /M
+
+Close and reopen CMD, then check if JAVA_HOME is Set Correctly: echo %JAVA_HOME%
+it should display smth like: C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot
+
+The basic commands:
+
+Start Solr Again (in cmd)
+cd solr-9.8.0
+bin\solr.cmd start -p 8983
+
+it should display:
+Waiting up to 180 seconds to see Solr running on port 8983
+Started Solr server on port 8983. Happy searching!
+
+type in http://localhost:8983/solr/ in your browser
+
+Create a Core for Indexing(in cmd)
+bin/solr create -c mycore
+
+to return to code folder: cd..
+you may start to run your code
+
+
+to stop Solr(in cmd): 
+bin/solr stop -p 8983
+
+
+Example of Multiple Cores
+Assume we have an e-commerce website that needs to search across products, customers, and orders separately. We can create three Solr cores:
+
+products_core → Stores product information (name, category, price, description)
+customers_core → Stores customer details (name, email, address)
+orders_core → Stores order history (customer ID, order date, total amount)
+
+
+Feature	                Solr (Search Engine)	                Relational Database (SQL-based)
+Data Structure	        Schema-based (JSON/XML documents)	    Tables with rows & columns
+Primary Purpose	        Full-text search & fast lookups	Data    storage & transactions
+Query Language	        Solr Query Syntax / Lucene Queries	    SQL (SELECT, JOIN, etc.)
+Joins & Relations	    Limited join capabilities	            Strong support for joins & normalization
+Performance	Optimized   for searching large text datasets	    Optimized for structured data transactions
