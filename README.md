@@ -41,169 +41,34 @@ OpenJDK 64-Bit Server VM (build 17.0.2+8, mixed mode)
 
 ---
 
-### 1.2 Set `JAVA_HOME` (Windows)
-
-#### Find Java Path
-```cmd
-where java
-```
-
-**Example Output:**
-```cmd
-C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot\bin\java.exe
-```
-
-- Copy everything before `\bin\java.exe`, for example:
-```cmd
-C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot
-```
-
-#### Set `JAVA_HOME` Temporarily
-```cmd
-set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot
-```
-
-#### Set `JAVA_HOME` Permanently
-```cmd
-setx JAVA_HOME "C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot" /M
-```
-
-**Verify:**
-```cmd
-echo %JAVA_HOME%
-```
-
-**Example Output:**
-```cmd
-C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot
-```
-
----
-
-### 1.3 Set `JAVA_HOME` in Git Bash
-
-#### Temporary Session
-```bash
-export JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-21.0.6.7-hotspot"
-```
-
-#### Permanently in `~/.bashrc`
-```bash
-nano ~/.bashrc
-```
-Add this line:
-```bash
-export JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-21.0.6.7-hotspot"
-```
-Load new settings:
-```bash
-source ~/.bashrc
-```
-
----
-
-## 2. Download and Unpack Solr
-
-1. **Download Solr:**  
-   Visit [Apache Solr Downloads](https://solr.apache.org/downloads.html).
-
-2. **Unpack Solr**
-```bash
-tar -xvzf ./solr-9.8.0.tgz -C /home/user/solr
-```
-
----
-
-## 3. Start Solr
-
-```cmd
-cd solr-9.8.0
-bin\solr.cmd start -p 8983
-```
-
-Open in browser:
-```
-http://localhost:8983/solr/
-```
-
----
-
-## 4. Create a Solr Core
-```cmd
-bin\solr.cmd create -c mycore
-```
-
----
-
-## 5. Navigation
-
-```cmd
-cd ..
-```
-
----
-
-## 6. Stop Solr
-```cmd
-bin\solr.cmd stop -p 8983
-```
-
----
-
-## 7. Example of Multiple Cores
-
-```cmd
-bin\solr.cmd create -c products_core
-bin\solr.cmd create -c customers_core
-bin\solr.cmd create -c orders_core
-```
-
----
-
-## 8. Solr vs. Relational Database
-
-| Feature | Solr (Search Engine) | Relational Database (SQL-based) |
-|---------|-----------------------|---------------------------------|
-| Data Structure | JSON/XML documents | Tables with rows & columns |
-| Primary Purpose | Full-text search | Data storage & transactions |
-| Query Language | Solr Query Syntax | SQL |
-| Joins & Relations | Limited | Strong support for joins |
-| Performance | Optimized for search | Optimized for transactions |
-
----
-
 ## 9. Index Data Using `curl`
 
+### Command Example
 ```cmd
-curl "http://localhost:8983/solr/mycore/update?commit=true" ^
+curl "http://localhost:8983/solr/AI_and_JobMarket/update?commit=true" ^
      -H "Content-Type: application/json" ^
-     --data-binary "@C:\data\books.json"
+     --data-binary "@C:\Users\tegti\OneDrive\Documents\MERN\School\SC4021-InfoRet\SC4021-Information-Retrieval\data\combined_data\combined.json"
 ```
 
----
+### Explanation
+- **http://localhost:8983/solr/AI_and_JobMarket/update?commit=true**: The Solr update endpoint
+  - `AI_and_JobMarket` = The Solr core name where data will be indexed
+  - `?commit=true` = Forces Solr to commit changes immediately
+- **-H "Content-Type: application/json"**: Specifies that the data format is JSON
+- **--data-binary**: Indicates that the data is sent as a raw binary file
+- **"@...\combined.json"**: Path to the JSON file being uploaded
 
-## 10. Querying Solr
-
-In the Solr Admin UI, use the query:
-```
-q=*:*
-```
-
----
-
-## 11. Customize Schemas via API
-
-```bash
-curl -X POST -H 'Content-type:application/json' \
---data-binary '{
-  "add-field": {
-    "name":"new_field",
-    "type":"string",
-    "stored":true
+### Expected Output
+```json
+{
+  "responseHeader":{
+    "status":0,
+    "QTime":8141
   }
-}' \
-http://localhost:8983/solr/mycore/schema
+}
 ```
+- **"status":0** indicates a successful update
+- **"QTime"** shows the time taken for the request in milliseconds
 
 ---
 
