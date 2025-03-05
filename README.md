@@ -1,5 +1,7 @@
 # SC4021 Info Ret.
 
+Good yoiutube for solr set up:https://www.youtube.com/watch?v=tJRwI_P290A (more updated) & https://www.youtube.com/watch?v=Zw4M4NGv-Rw (best but is for older 8.X.X versions so some commands dont work like to push json to the solr core)
+
 ## Apache Solr Setup & Usage
 
 This guide walks you through downloading, installing, and running Apache Solr. It also covers setting up your Java environment (`JAVA_HOME`) and provides a quick comparison between Solr and a traditional relational database.
