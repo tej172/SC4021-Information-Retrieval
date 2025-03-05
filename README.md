@@ -43,7 +43,7 @@ OpenJDK 64-Bit Server VM (build 17.0.2+8, mixed mode)
 
 ---
 
-### 1.2 Set `JAVA_HOME` (Windows)
+### 1.2 Set `JAVA_HOME` (Windows) (if using windows cmd)
 
 #### Find Java Path
 ```cmd
@@ -82,7 +82,7 @@ C:\Program Files\Eclipse Adoptium\jdk-21.0.6.7-hotspot
 
 ---
 
-### 1.3 Set `JAVA_HOME` in Git Bash
+### 1.3 Set `JAVA_HOME` in Git Bash (if using git)
 
 #### Temporary Session
 ```bash
