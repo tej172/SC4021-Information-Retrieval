@@ -1,4 +1,4 @@
-#SC4021 Info Ret.
+# SC4021 Info Ret.
 
 # Apache Solr Setup & Usage
 
