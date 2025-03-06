@@ -4,9 +4,9 @@ from sentence_transformers import SentenceTransformer, util
 import pickle
 import os
 
-CLIENTID = '507qn5Pz43Gr8LHkoLva2w'
-CLIENTSECRET = 'vYCBoLO-YIHtj324YZSDKsrMmV53uA'
-USERAGENT = 'crawlScript/1.0 (by /u/FluffPillow113)' # this any be any, just so that enable reddit to track usage
+CLIENTID = 
+CLIENTSECRET = 
+USERAGENT =  # this any be any, just so that enable reddit to track usage
 QUERY_EMBEDDING_FILE = "query_embedding.pkl"
 
 def ComputeSimilarity(text):
