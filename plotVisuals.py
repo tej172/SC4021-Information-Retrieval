@@ -45,13 +45,13 @@ def wordCloud(results):
         wordcloud = WordCloud(width=800, height=300, background_color='white', colormap='brg').generate_from_frequencies(word_freq)
 
         # Create an image to save
-        plt.figure(figsize=(12, 10))
+        plt.figure(figsize=(10, 5))
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis("off")
 
         # Save the image to a BytesIO object
         img = BytesIO()
-        plt.savefig(img, format='png', bbox_inches='tight', dpi=500)  # Higher DPI for quality
+        plt.savefig(img, format='png', bbox_inches='tight')  # Higher DPI for quality
         img.seek(0)
 
         # Encode the image to base64 to pass it to HTML

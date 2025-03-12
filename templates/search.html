@@ -134,7 +134,9 @@
         <div id="popup" class="popup">
             <h3>Graphs</h3>
             <div id="plotlyGraph1"></div> <!-- Placeholder for Plotly graph 1 -->
-            <img src="data:image/png;base64,{{ plot_url1 }}" alt="Word Cloud" style="width: 100%; height: auto;">
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img src="data:image/png;base64,{{ plot_url1 }}" alt="Word Cloud">
+            </div>
             <button id="closePopup" class="btn btn-secondary mt-3">Close</button>
         </div>
 
