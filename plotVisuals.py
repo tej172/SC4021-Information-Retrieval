@@ -121,7 +121,7 @@ def polarityDistribution(results):
 
     # Remove the legend
     fig.update_layout(showlegend=False, 
-                      title_text= "Overall Population Age Group Composition",
+                      title_text= "Polarity Composition",
                       font=dict(size=16))
     
     # Show the pie chart

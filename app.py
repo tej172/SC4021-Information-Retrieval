@@ -69,8 +69,7 @@ def search():
         "Aerospace & Defense"
     ]
 
-    
-
+  
     # Perform the search if there's a query
     results = []
     total_results = 0
