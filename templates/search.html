@@ -6,9 +6,6 @@
     <title>Search Engine</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        /* Add your custom styles here */
-    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -17,7 +14,6 @@
             <!-- Search bar and button -->
             <div class="search-container">
                 <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Enter search query">
-                <button type="submit" class="btn btn-primary">Search</button>
             </div>
 
             <!-- Filter and Sort Controls -->
@@ -123,8 +119,28 @@
                         </div>
                     </div>
                 </div>
+                <!-- Button to trigger the popup -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <button id="popupButton" type="button" class="btn btn-primary">Show Graphs</button>
+                    </div>
+                </div>
+                
             </div>
         </form>
+        
+        <!-- Popup Window -->
+        <div id="popup" class="popup">
+            <h3>Graphs</h3>
+            <div id="plotlyGraph1"></div> <!-- Placeholder for Plotly graph 1 -->
+            <img src="data:image/png;base64,{{ plot_url1 }}" alt="Word Cloud" style="width: 100%; height: auto;">
+            <button id="closePopup" class="btn btn-secondary mt-3">Close</button>
+        </div>
+
+        <!-- Overlay for the popup -->
+        <div id="overlay" class="overlay"></div>
+
         <!-- Results -->
         <div id="resultsContainer" class="results-container">
             {% if results %}
@@ -163,6 +179,33 @@
         </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/search.js') }}"></script>
+    <!-- Include Plotly library -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        // JavaScript to handle the popup
+        document.getElementById('popupButton').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+
+            // Render Plotly graphs passed from Flask
+            const graph1 = JSON.parse('{{ graph1_json | safe }}');
+            Plotly.newPlot('plotlyGraph1', graph1.data, graph1.layout);
+
+            // Set the image source to the base64-encoded plot
+            const plotUrl1 = "data:image/png;base64,{{ plot_url1 }}";
+            document.getElementById('plotImage').src = plotUrl1;
+
+        });
+
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        });
+    </script>
 </body>
 </html>

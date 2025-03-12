@@ -1,0 +1,121 @@
+[
+    {
+        "id":"1",
+        "text": "If ai speeds up work or even regularly does a single task, that displaces jobs.\n\nReduced workload -> reduced headcount",
+        "time": 1718039224.0,
+        "popularity": 463,
+        "source": "Reddit",
+        "polarity": "negative",
+        "subjectivity": "neutral",
+        "category": [
+            "Technology & IT",
+            "Consumer Goods & Services",
+            "Non-Profit & Social Services",
+            "Manufacturing & Engineering",
+            "Human Resources & Talent Management"
+        ],
+        "date": "2024-06-10"
+    },
+    {
+        "id":"2",
+        "text": "I'm replacing my job with AI, I just hope my boss doesn't find out for a few decades.",
+        "time": 1718045286.0,
+        "popularity": 93,
+        "source": "Reddit",
+        "polarity": "negative",
+        "subjectivity": "neutral",
+        "category": [
+            "Technology & IT",
+            "Human Resources & Talent Management",
+            "Legal & Compliance",
+            "Manufacturing & Engineering",
+            "Consumer Goods & Services"
+        ],
+        "date": "10-06-2024"
+    },
+    {
+        "id":"3",
+        "text": "Sure they will, at least a large portion of them. Maybe not full time but much of the time. \n\nThose with access to superior technology and resources will excel and do better than those without. AI teacher can go home with you and explain your homework on a Saturday.",
+        "time": 1701342141.0,
+        "popularity": 0,
+        "source": "Reddit",
+        "polarity": "positive",
+        "subjectivity": "opinionated",
+        "category": [
+            "Technology & IT",
+            "Education & Training",
+            "Consumer Goods & Services",
+            "Human Resources & Talent Management",
+            "Entertainment & Media"
+        ],
+        "date": "30-11-2023"
+    },
+    {
+        "id":"4",
+        "text": "Then it's time for lots of playing-gaming, paired with regular learning activities such as reading, writing, learning languages, learning to do math with our brains, learning to play instruments, etcetera.\n\nEven if we individually have super duper AI assistants that doesn't mean our fatty watery computers don't need development and training because that's just the way they have been for millenia. If we don't want that anymore then we just replace regular humans with androids, or not even, I don't know.",
+        "time": 1701346184.0,
+        "popularity": 5,
+        "source": "Reddit",
+        "polarity": "negative",
+        "subjectivity": "neutral",
+        "category": [
+            "Education & Training",
+            "Entertainment & Media",
+            "Sports, Fitness & Recreation",
+            "Technology & IT",
+            "Non-Profit & Social Services"
+        ],
+        "date": "30-11-2023"
+    },
+    {
+        "id":"5",
+        "text": "You\u2019re still on with the Strawman though. I haven\u2019t at any point suggested that we replace school staff with AI.\n\nI\u2019m just saying that AI will be able to teach kids-older people better than the average teacher. And because of this, education will change.",
+        "time": 1701362952.0,
+        "popularity": 1,
+        "source": "Reddit",
+        "polarity": "positive",
+        "subjectivity": "opinionated",
+        "category": [
+            "Technology & IT",
+            "Education & Training",
+            "Non-Profit & Social Services",
+            "Consumer Goods & Services",
+            "Human Resources & Talent Management"
+        ],
+        "date": "30-11-2023"
+    },
+    {
+        "id":"6",
+        "text": "You\u2019re still on with the Strawman though. I haven\u2019t at any point suggested that we replace school staff with AI.\n\nI\u2019m just saying that AI will be able to teach kids-older people better than the average teacher. And because of this, education will change.",
+        "time": 1701362952.0,
+        "popularity": 1,
+        "source": "Reddit",
+        "polarity": "positive",
+        "subjectivity": "opinionated",
+        "category": [
+            "Technology & IT",
+            "Education & Training",
+            "Non-Profit & Social Services",
+            "Consumer Goods & Services",
+            "Human Resources & Talent Management"
+        ],
+        "date": "30-11-2023"
+    },
+    {
+        "id":"7",
+        "text": "You\u2019re still on with the Strawman though. I haven\u2019t at any point suggested that we replace school staff with AI.\n\nI\u2019m just saying that AI will be able to teach kids-older people better than the average teacher. And because of this, education will change.",
+        "time": 1701362952.0,
+        "popularity": 1,
+        "source": "Reddit",
+        "polarity": "positive",
+        "subjectivity": "opinionated",
+        "category": [
+            "Technology & IT",
+            "Education & Training",
+            "Non-Profit & Social Services",
+            "Consumer Goods & Services",
+            "Human Resources & Talent Management"
+        ],
+        "date": "30-11-2023"
+    }
+]

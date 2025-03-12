@@ -1,5 +1,9 @@
 from flask import Flask, request, render_template
 import pysolr
+from plotVisuals import wordCloud, plotGraph1, plotGraph2,polarityDistribution
+import json
+import plotly
+import plotly.graph_objs as go
 
 app = Flask(__name__)
 
@@ -90,9 +94,13 @@ def search():
     search_results = solr.search(q=params['q'], fq=params['fq'], sort=params['sort'], start=params['start'], rows=params['rows'])
     results = search_results.docs  # Extract documents from the search results
     total_results = search_results.hits  # Total number of results
-
     # Calculate total pages
     total_pages = (total_results + results_per_page - 1) // results_per_page
+
+    # Generate Result Specific Graph
+    # Example Plotly graph 1 # plotGraph1()
+    graph1_json = polarityDistribution(results)
+    plot_url1 = wordCloud(results)
 
     # Render the HTML template with the query and results
     return render_template('search.html', 
@@ -112,7 +120,9 @@ def search():
                          page=page,
                          results_per_page=results_per_page,
                          total_pages=total_pages,
-                         total_results=total_results)
+                         total_results=total_results,
+                         graph1_json=graph1_json, 
+                         plot_url1=plot_url1)
 
 if __name__ == '__main__':
     app.run(debug=True)
