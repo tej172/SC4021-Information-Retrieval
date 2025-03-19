@@ -18,6 +18,14 @@
             <div class="search-container">
                 <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Enter search query">
             </div>
+
+            <!-- Button to Navigate to Dashboard -->
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">View Visualization Dashboard</a>
+                </div>
+            </div>
+
             
             <!-- Filter and Sort Controls -->
             <div class="filter-section">
@@ -185,7 +193,7 @@
     </div>
 
     <!-- Include Plotly library -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
     <script>
         // JavaScript to handle the popup
         document.getElementById('popupButton').addEventListener('click', function() {
@@ -198,8 +206,7 @@
 
             // Set the image source to the base64-encoded plot
             const plotUrl1 = "data:image/png;base64,{{ plot_url1 }}";
-            document.getElementById('plotImage').src = plotUrl1;
-
+            document.getElementById('plotImage').src = plotUrl1;       
         });
 
         document.getElementById('closePopup').addEventListener('click', function() {

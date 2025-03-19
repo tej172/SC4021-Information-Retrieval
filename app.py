@@ -1,18 +1,49 @@
 from flask import Flask, request, render_template
 import pysolr
 from plotVisuals import wordCloud, plotGraph1, plotGraph2,polarityDistribution
+from flask import Flask, request, render_template, jsonify
 import json
 import plotly
 import plotly.graph_objs as go
 
+from plotVisuals import ai_impact_predictions_confidence_interval, ai_sentiment_trends_across_sectors, categoryPopularityHeatmap, industry_sentiment_heatmap, popularityVsSubjectivity, professionComparison, sentiment_distribution_by_industry, sentiment_over_time_with_milestones, sentimentOverTime, sentimentVsPopularity, word_cloud_of_ai_discussions, wordCloud, polarityDistribution,wordFrequencyBarChart
+import pandas as pd
 app = Flask(__name__)
 
-# Solr connection URL
-SOLR_URL = 'http://localhost:8983/solr/mycore'
+# # Solr connection URL
+# SOLR_URL = 'http://localhost:8983/solr/mycore'
 
-# Initialize a Solr client
-solr = pysolr.Solr(SOLR_URL, timeout=10)
+# # Initialize a Solr client
+# solr = pysolr.Solr(SOLR_URL, timeout=10)
 
+# Load JSON data
+with open("data.json", "r", encoding="utf-8") as file:
+    DATA = json.load(file)
+
+STATIC_DIR = "static"
+def save_plotly_json(fig, filename):
+    fig_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    with open(os.path.join("static", filename), "w") as f:
+        f.write(fig_json)
+
+@app.route("/dashboard", methods=["GET"])
+def dashboard():
+    df = pd.DataFrame(DATA)
+
+    sentiment_distribution_image = sentiment_distribution_by_industry(df)
+    sentiment_over_time_image = sentiment_over_time_with_milestones(df)
+    industry_sentiment_heatmap_image = industry_sentiment_heatmap(df)
+    ai_sentiment_trends_image = ai_sentiment_trends_across_sectors(df)
+    ai_impact_predictions_image = ai_impact_predictions_confidence_interval()
+
+    return render_template(
+        "dashboard.html",
+        sentiment_distribution_image=sentiment_distribution_image,
+        sentiment_over_time_image=sentiment_over_time_image,
+        industry_sentiment_heatmap_image=industry_sentiment_heatmap_image,
+        ai_sentiment_trends_image=ai_sentiment_trends_image,
+        ai_impact_predictions_image=ai_impact_predictions_image
+    )
 
 @app.route('/', methods=['GET'])
 def search():
@@ -69,7 +100,6 @@ def search():
         "Aerospace & Defense"
     ]
 
-    
     # Perform the search if there's a query
     results = []
     total_results = 0
