@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template
 import pysolr
-from plotVisuals import wordCloud, plotGraph1, plotGraph2,polarityDistribution
+from plotVisuals import wordCloud, polarityDistribution, sentiment_distribution_by_industry, sentiment_over_time_with_milestones, industry_sentiment_heatmap, word_cloud_of_ai_discussions, ai_sentiment_trends_across_sectors,ai_impact_predictions_confidence_interval
 import json
 import plotly
 import plotly.graph_objs as go
@@ -95,11 +95,18 @@ def search():
     total_results = search_results.hits  # Total number of results
     # Calculate total pages
     total_pages = (total_results + results_per_page - 1) // results_per_page
-
+    print(type(results))
     # Generate Result Specific Graph
     # Example Plotly graph 1 # plotGraph1()
-    graph1_json = polarityDistribution(results)
+
     plot_url1 = wordCloud(results)
+    plot_url2 = word_cloud_of_ai_discussions(results)
+    plot_url3 = polarityDistribution(results)
+    plot_url4 = sentiment_distribution_by_industry(results)
+    plot_url5 = sentiment_over_time_with_milestones(results)
+    plot_url6 = industry_sentiment_heatmap(results)
+    plot_url7 = ai_sentiment_trends_across_sectors(results)
+    plot_url8 = ai_impact_predictions_confidence_interval()
 
     # Render the HTML template with the query and results
     return render_template('search.html', 
@@ -120,8 +127,14 @@ def search():
                          results_per_page=results_per_page,
                          total_pages=total_pages,
                          total_results=total_results,
-                         graph1_json=graph1_json, 
-                         plot_url1=plot_url1)
+                         plot_url1=plot_url1,
+                         plot_url2=plot_url2,
+                         plot_url3=plot_url3,
+                         plot_url4=plot_url4,
+                         plot_url5=plot_url5,
+                         plot_url6=plot_url6,
+                         plot_url7=plot_url7,
+                         plot_url8=plot_url8)
 
 if __name__ == '__main__':
     app.run(debug=True)
