@@ -1,9 +1,8 @@
 from flask import Flask, request, render_template
 import pysolr
-from plotVisuals import wordCloud, polarityDistribution, sentiment_distribution_by_industry, sentiment_over_time_with_milestones, industry_sentiment_heatmap, word_cloud_of_ai_discussions, ai_sentiment_trends_across_sectors,ai_impact_predictions_confidence_interval
-import json
-import plotly
-import plotly.graph_objs as go
+from plotVisuals import wordCloud, polarityDistribution, sentiment_distribution_by_industry, sentiment_over_time_with_milestones, industry_sentiment_heatmap, word_cloud_of_ai_discussions, ai_sentiment_trends_across_sectors
+import re
+import spacy
 
 app = Flask(__name__)
 
@@ -13,11 +12,20 @@ SOLR_URL = 'http://localhost:8983/solr/mycore'
 # Initialize a Solr client
 solr = pysolr.Solr(SOLR_URL, timeout=10)
 
+# Load the spaCy English model
+nlp = spacy.load('en_core_web_sm')
 
 @app.route('/', methods=['GET'])
 def search():
     # Get the search query
     query = request.args.get('q', '').strip()  # Default to '*' if 'q' is not found
+    if query: # not empty query
+        # Process the text using spaCy
+        doc = nlp(query)
+        
+        # Join the lemmatized tokens into a sentence
+        lemmatized_text = ' '.join([token.lemma_ for token in doc])
+        words = re.findall(r'\b\w+\b', lemmatized_text)  # Extracts only words
 
     # Get the date range
     date_from = request.args.get('date_from', '').strip() or '*'  # Default to '*' if 'date_from' is not found
@@ -75,9 +83,9 @@ def search():
     total_results = 0
     # Define query parameters
     params = {
-        'q': f'text:*{query}*',
+        'q': f'text:*' if query=='' else f'text:({'~ OR '.join(words)}~)', # text:* *: for all record search, text: query~  for fuzzy search/approximate matching
         'fq': [
-            f'source:({" OR ".join(sources)})',
+            f'source:({" OR ".join(sources)})', 
             f'polarity:({" OR ".join(polarities)})',
             f'subjectivity:({" OR ".join(subjectivities)})',
             f'category:({" OR ".join(selected_categories)})',
@@ -88,14 +96,13 @@ def search():
         'start': (page - 1) * results_per_page,
         'rows': results_per_page
     }
-
     # Perform the search
     search_results = solr.search(q=params['q'], fq=params['fq'], sort=params['sort'], start=params['start'], rows=params['rows'])
     results = search_results.docs  # Extract documents from the search results
     total_results = search_results.hits  # Total number of results
     # Calculate total pages
     total_pages = (total_results + results_per_page - 1) // results_per_page
-    print(type(results))
+    
     # Generate Result Specific Graph
     # Example Plotly graph 1 # plotGraph1()
 
@@ -106,7 +113,6 @@ def search():
     plot_url5 = sentiment_over_time_with_milestones(results)
     plot_url6 = industry_sentiment_heatmap(results)
     plot_url7 = ai_sentiment_trends_across_sectors(results)
-    plot_url8 = ai_impact_predictions_confidence_interval()
 
     # Render the HTML template with the query and results
     return render_template('search.html', 
@@ -133,8 +139,7 @@ def search():
                          plot_url4=plot_url4,
                          plot_url5=plot_url5,
                          plot_url6=plot_url6,
-                         plot_url7=plot_url7,
-                         plot_url8=plot_url8)
+                         plot_url7=plot_url7)
 
 if __name__ == '__main__':
     app.run(debug=True)
