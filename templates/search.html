@@ -136,10 +136,28 @@
         <!-- Popup Window -->
         <div id="popup" class="popup">
             <h3>Graphs</h3>
-            <div id="plotlyGraph1"></div> <!-- Placeholder for Plotly graph 1 -->
             <div style="display: flex; justify-content: center; width: 100%;">
                 <img src="data:image/png;base64,{{ plot_url1 }}" alt="Word Cloud">
             </div>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img src="data:image/png;base64,{{ plot_url2 }}" alt="graph">
+            </div>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img src="data:image/png;base64,{{ plot_url3 }}" alt="graph">
+            </div>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img src="data:image/png;base64,{{ plot_url4 }}" alt="graph">
+            </div>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img src="data:image/png;base64,{{ plot_url5 }}" alt="graph">
+            </div>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img src="data:image/png;base64,{{ plot_url6 }}" alt="graph">
+            </div>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img src="data:image/png;base64,{{ plot_url7 }}" alt="graph">
+            </div>
+
             <button id="closePopup" class="btn btn-secondary mt-3">Close</button>
         </div>
 
@@ -185,20 +203,34 @@
     </div>
 
     <!-- Include Plotly library -->
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script>
         // JavaScript to handle the popup
         document.getElementById('popupButton').addEventListener('click', function() {
             document.getElementById('popup').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
 
-            // Render Plotly graphs passed from Flask
-            const graph1 = JSON.parse('{{ graph1_json | safe }}');
-            Plotly.newPlot('plotlyGraph1', graph1.data, graph1.layout);
-
             // Set the image source to the base64-encoded plot
             const plotUrl1 = "data:image/png;base64,{{ plot_url1 }}";
-            document.getElementById('plotImage').src = plotUrl1;
+            document.getElementById('plotImage1').src = plotUrl1;
+
+            // Set the image source to the base64-encoded plot
+            const plotUrl2 = "data:image/png;base64,{{ plot_url2 }}";
+            document.getElementById('plotImage2').src = plotUrl2;
+
+            const plotUrl3 = "data:image/png;base64,{{ plot_url3 }}";
+            document.getElementById('plotImage3').src = plotUrl3;
+
+            const plotUrl4 = "data:image/png;base64,{{ plot_url4 }}";
+            document.getElementById('plotImage4').src = plotUrl4;
+
+            const plotUrl5 = "data:image/png;base64,{{ plot_url5 }}";
+            document.getElementById('plotImage5').src = plotUrl5;
+
+            const plotUrl6 = "data:image/png;base64,{{ plot_url6 }}";
+            document.getElementById('plotImage6').src = plotUrl6;
+
+            const plotUrl7 = "data:image/png;base64,{{ plot_url7 }}";
+            document.getElementById('plotImage7').src = plotUrl7;
 
         });
 
