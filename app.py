@@ -1,145 +1,130 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session
 import pysolr
-from plotVisuals import wordCloud, polarityDistribution, sentiment_distribution_by_industry, sentiment_over_time_with_milestones, industry_sentiment_heatmap, word_cloud_of_ai_discussions, ai_sentiment_trends_across_sectors
-import re
 import spacy
+import re
+from datetime import datetime
+from plotVisuals import (
+    wordCloud, polarityDistribution, sentiment_distribution_by_industry,
+    industry_sentiment_heatmap, word_cloud_polarity, ai_sentiment_trends_across_sectors,
+    source_distribution, sentiment_by_source, popularity_vs_sentiment
+)
 
+# Initialize Flask app
 app = Flask(__name__)
+app.secret_key = 'your_secret_key_here'  # Required for session management
 
-# Solr connection URL
-SOLR_URL = 'http://localhost:8983/solr/mycore'
+# Solr setup
+solr = pysolr.Solr('http://localhost:8983/solr/mycore', timeout=10)
 
-# Initialize a Solr client
-solr = pysolr.Solr(SOLR_URL, timeout=10)
-
-# Load the spaCy English model
+# NLP model
 nlp = spacy.load('en_core_web_sm')
+
+# Constants
+DEFAULT_RESULTS_PER_PAGE = 5
+PAGINATION_RANGE = 1
+ALL_CATEGORIES = [
+    "Technology & IT", "Finance & Banking", "Healthcare & Pharmaceuticals", "Energy & Utilities",
+    "Retail & E-Commerce", "Entertainment & Media", "Manufacturing & Engineering", "Transportation & Logistics",
+    "Education & Training", "Legal & Compliance", "Real Estate & Property", "Marketing & Advertising",
+    "Human Resources & Talent Management", "Agriculture & Environmental", "Consumer Goods & Services",
+    "Sports, Fitness & Recreation", "Non-Profit & Social Services", "Aerospace & Defense"
+]
+
+# Helper functions
+def get_param(key, default=''):
+    """Retrieve request parameter with default handling."""
+    return request.args.get(key, default=default).strip() or '*'
+
+def get_list_param(key):
+    """Retrieve list parameter with wildcard default."""
+    return request.args.getlist(key) or ["*"]
+
+def get_date_param(key):
+    date = request.args.get(key, default='').strip() or '*'
+    if date!= "*":
+        valid_date = datetime.strptime(date, '%Y-%m-%d')  # Expecting YYYY-MM-DD format
+        date = valid_date.strftime('%Y-%m-%dT00:00:00Z')  # Convert to the desired format
+    return date
+
+def build_solr_params(request_args):
+    """Construct Solr search parameters from request arguments."""
+    query = request_args.get('q', '').strip()
+    words = []
+    if query:
+        lemmatized = ' '.join([token.lemma_ for token in nlp(query)])
+        words = re.findall(r'\b\w+\b', lemmatized)
+    return {
+        'q': f'text:*' if not query else f'text:({" OR ".join(words)}~)',
+        'filters': [
+            f'source:({" OR ".join(get_list_param("source"))})',
+            f'polarity:({" OR ".join(get_list_param("polarity"))})',
+            f'subjectivity:({" OR ".join(get_list_param("subjectivity"))})',
+            f'category:({" OR ".join(get_list_param("category"))})',
+            f'date: [{get_date_param("date_from")} TO {get_date_param("date_to")}]',
+            f'popularity:[{get_param("popularity_min")} TO {get_param("popularity_max")}]'
+        ],
+        'sort': f'{get_param('sort_field', 'id_num')} {get_param('sort_order', 'asc')}',
+        'start': (int(request_args.get('page', 1)) - 1) * DEFAULT_RESULTS_PER_PAGE,
+        'rows': DEFAULT_RESULTS_PER_PAGE
+    }
+
+def generate_visualizations(results):
+    """Generate various sentiment-related visualizations."""
+    visual_functions = [
+        wordCloud, word_cloud_polarity, source_distribution, sentiment_by_source,
+        popularity_vs_sentiment, polarityDistribution, sentiment_distribution_by_industry,
+        industry_sentiment_heatmap, ai_sentiment_trends_across_sectors
+    ]
+    for func in visual_functions:
+        func(results)
 
 @app.route('/', methods=['GET'])
 def search():
-    # Get the search query
-    query = request.args.get('q', '').strip()  # Default to '*' if 'q' is not found
-    if query: # not empty query
-        # Process the text using spaCy
-        doc = nlp(query)
-        
-        # Join the lemmatized tokens into a sentence
-        lemmatized_text = ' '.join([token.lemma_ for token in doc])
-        words = re.findall(r'\b\w+\b', lemmatized_text)  # Extracts only words
-
-    # Get the date range
-    date_from = request.args.get('date_from', '').strip() or '*'  # Default to '*' if 'date_from' is not found
-    date_to = request.args.get('date_to', '').strip() or '*'  # Default to '*' if 'date_to' is not found
-
-    # Get the popularity range
-    popularity_min = request.args.get('popularity_min', '').strip() or '*'  # Default to '*' if 'popularity_min' is not found
-    popularity_max = request.args.get('popularity_max', '').strip() or '*'  # Default to '*' if 'popularity_max' is not found
-
-    # Get the sorting options
-    sort_field = request.args.get('sort_field', '').strip() or 'id'  # Default to 'popularity' if 'sort_field' is not found
-    sort_order = request.args.get('sort_order', '').strip() or 'asc'  # Default to 'desc' if 'sort_order' is not found
-
-    # Get the sources
-    sources = request.args.getlist('source') or ["*"]  # Default to ['*'] if list not found
-
-    # Get the polarities
-    polarities = request.args.getlist('polarity') or ["*"]  # Default to ['*'] if list not found
-
-    # Get the subjectivities
-    subjectivities = request.args.getlist('subjectivity') or ["*"]  # Default to ['*'] if list not found
-
-    # Get the selected categories
-    selected_categories = request.args.getlist('category') or ["*"]  # Default to ['*'] if list not found
-
-    # Get the page number and results per page
-    page = int(request.args.get('page', 1))
-    results_per_page = int(request.args.get('results_per_page', 5))
-
-    # Define the list of all available categories
-    all_categories = [
-        "Technology & IT",
-        "Finance & Banking",
-        "Healthcare & Pharmaceuticals",
-        "Energy & Utilities",
-        "Retail & E-Commerce",
-        "Entertainment & Media",
-        "Manufacturing & Engineering",
-        "Transportation & Logistics",
-        "Education & Training",
-        "Legal & Compliance",
-        "Real Estate & Property",
-        "Marketing & Advertising",
-        "Human Resources & Talent Management",
-        "Agriculture & Environmental",
-        "Consumer Goods & Services",
-        "Sports, Fitness & Recreation",
-        "Non-Profit & Social Services",
-        "Aerospace & Defense"
-    ]
-
+    """Handle search requests and render results."""
+    params = build_solr_params(request.args)
     
-    # Perform the search if there's a query
-    results = []
-    total_results = 0
-    # Define query parameters
-    params = {
-        'q': f'text:*' if query=='' else f'text:({'~ OR '.join(words)}~)', # text:* *: for all record search, text: query~  for fuzzy search/approximate matching
-        'fq': [
-            f'source:({" OR ".join(sources)})', 
-            f'polarity:({" OR ".join(polarities)})',
-            f'subjectivity:({" OR ".join(subjectivities)})',
-            f'category:({" OR ".join(selected_categories)})',
-            f'date:[{date_from} TO {date_to}]',
-            f'popularity:[{popularity_min} TO {popularity_max}]'
-        ],
-        'sort': f'{sort_field} {sort_order}',
-        'start': (page - 1) * results_per_page,
-        'rows': results_per_page
+    # Check if search parameters have changed
+    search_params = {
+        'q': request.args.get('q', ''),
+        'date_from': get_param('date_from'),
+        'date_to': get_param('date_to'),
+        'popularity_min': get_param('popularity_min'),
+        'popularity_max': get_param('popularity_max'),
+        'sort_field': get_param('sort_field', 'id_num'),
+        'sort_order': get_param('sort_order', 'asc'),
+        'sources': get_list_param('source'),
+        'polarity': get_list_param('polarity'),
+        'subjectivity': get_list_param('subjectivity'),
+        'category': get_list_param('category')
     }
-    # Perform the search
-    search_results = solr.search(q=params['q'], fq=params['fq'], sort=params['sort'], start=params['start'], rows=params['rows'])
-    results = search_results.docs  # Extract documents from the search results
-    total_results = search_results.hits  # Total number of results
-    # Calculate total pages
-    total_pages = (total_results + results_per_page - 1) // results_per_page
     
-    # Generate Result Specific Graph
-    # Example Plotly graph 1 # plotGraph1()
-
-    plot_url1 = wordCloud(results)
-    plot_url2 = word_cloud_of_ai_discussions(results)
-    plot_url3 = polarityDistribution(results)
-    plot_url4 = sentiment_distribution_by_industry(results)
-    plot_url5 = sentiment_over_time_with_milestones(results)
-    plot_url6 = industry_sentiment_heatmap(results)
-    plot_url7 = ai_sentiment_trends_across_sectors(results)
-
-    # Render the HTML template with the query and results
-    return render_template('search.html', 
-                         query=query, 
-                         date_from=date_from, 
-                         date_to=date_to, 
-                         popularity_min=popularity_min, 
-                         popularity_max=popularity_max, 
-                         sort_field=sort_field, 
-                         sort_order=sort_order, 
-                         sources=sources, 
-                         polarities=polarities, 
-                         subjectivities=subjectivities, 
-                         selected_categories=selected_categories, 
-                         all_categories=all_categories, 
-                         results=results,
-                         page=page,
-                         results_per_page=results_per_page,
-                         total_pages=total_pages,
-                         total_results=total_results,
-                         plot_url1=plot_url1,
-                         plot_url2=plot_url2,
-                         plot_url3=plot_url3,
-                         plot_url4=plot_url4,
-                         plot_url5=plot_url5,
-                         plot_url6=plot_url6,
-                         plot_url7=plot_url7)
+    if session.get('search_params') != search_params:
+        session['search_params'] = search_params
+        all_results = solr.search(q=params['q'], fq=params['filters'], sort=params['sort'], rows=13117).docs
+        generate_visualizations(all_results)
+    
+    # Retrieve paginated results
+    paginated_results = solr.search(q=params['q'], fq=params['filters'], sort=params['sort'], start=params['start'], rows=params['rows'])
+    total_results = paginated_results.hits
+    total_pages = (total_results + DEFAULT_RESULTS_PER_PAGE - 1) // DEFAULT_RESULTS_PER_PAGE
+    current_page = int(request.args.get('page', 1))
+    
+    for result in paginated_results.docs:
+        result['date'][0] = datetime.strptime(result['date'][0], "%Y-%m-%dT%H:%M:%SZ").strftime("%d-%m-%Y")
+    return render_template(
+        'search.html',
+        query=request.args.get('q', ''),
+        **search_params,
+        results=paginated_results.docs,
+        page=current_page,
+        results_per_page=DEFAULT_RESULTS_PER_PAGE,
+        total_pages=total_pages,
+        selected_categories = get_list_param('category'),
+        total_results=total_results,
+        start_page=max(1, current_page - PAGINATION_RANGE),
+        end_page=min(total_pages, current_page + PAGINATION_RANGE),
+        all_categories=ALL_CATEGORIES
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)

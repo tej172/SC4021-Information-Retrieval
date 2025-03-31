@@ -52,12 +52,12 @@
                             <label>Sort By:</label>
                             <div class="sort-container">
                                 <select id="sortField" name="sort_field" class="form-control">
-                                    <option value="">Select Field</option>
+                                    <option value="id_num" {% if sort_field == 'id_num' %}selected{% endif %}>Document ID</option>
                                     <option value="date" {% if sort_field == 'date' %}selected{% endif %}>Date</option>
                                     <option value="popularity" {% if sort_field == 'popularity' %}selected{% endif %}>Popularity</option>
+                                    
                                 </select>
                                 <select id="sortOrder" name="sort_order" class="form-control">
-                                    <option value="">Select Sort Order</option>
                                     <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
                                     <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
                                 </select>
@@ -84,9 +84,9 @@
                         <div class="form-group">
                             <label>Polarity:</label>
                             <div id="filterPolarity" class="checkbox-container">
-                                <label><input type="checkbox" name="polarity" value="positive" {% if 'positive' in polarities %}checked{% endif %}> Positive</label>
-                                <label><input type="checkbox" name="polarity" value="neutral" {% if 'neutral' in polarities %}checked{% endif %}> Neutral</label>
-                                <label><input type="checkbox" name="polarity" value="negative" {% if 'negative' in polarities %}checked{% endif %}> Negative</label>
+                                <label><input type="checkbox" name="polarity" value="positive" {% if 'positive' in polarity %}checked{% endif %}> Positive</label>
+                                <label><input type="checkbox" name="polarity" value="neutral" {% if 'neutral' in polarity %}checked{% endif %}> Neutral</label>
+                                <label><input type="checkbox" name="polarity" value="negative" {% if 'negative' in polarity %}checked{% endif %}> Negative</label>
                             </div>
                         </div>
                     </div>
@@ -96,8 +96,8 @@
                         <div class="form-group">
                             <label>Subjectivity:</label>
                             <div id="filterSubjectivity" class="checkbox-container">
-                                <label><input type="checkbox" name="subjectivity" value="opinionated" {% if 'opinionated' in subjectivities %}checked{% endif %}> Opinionated</label>
-                                <label><input type="checkbox" name="subjectivity" value="neutral" {% if 'neutral' in subjectivities %}checked{% endif %}> Neutral</label>
+                                <label><input type="checkbox" name="subjectivity" value="opinionated" {% if 'opinionated' in subjectivity %}checked{% endif %}> Opinionated</label>
+                                <label><input type="checkbox" name="subjectivity" value="neutral" {% if 'neutral' in subjectivity %}checked{% endif %}> Neutral</label>
                             </div>
                         </div>
                     </div>
@@ -137,29 +137,36 @@
         <div id="popup" class="popup">
             <h3>Graphs</h3>
             <div style="display: flex; justify-content: center; width: 100%;">
-                <img src="data:image/png;base64,{{ plot_url1 }}" alt="Word Cloud">
+                <img id="plotImage1" src="" alt="Word Cloud">
             </div>
             <div style="display: flex; justify-content: center; width: 100%;">
-                <img src="data:image/png;base64,{{ plot_url2 }}" alt="graph">
+                <img id="plotImage2" src="" alt="Word Cloud">
             </div>
             <div style="display: flex; justify-content: center; width: 100%;">
-                <img src="data:image/png;base64,{{ plot_url3 }}" alt="graph">
+                <img id="plotImage3" src="" alt="Word Cloud">
             </div>
             <div style="display: flex; justify-content: center; width: 100%;">
-                <img src="data:image/png;base64,{{ plot_url4 }}" alt="graph">
+                <img id="plotImage4" src="" alt="Word Cloud">
             </div>
             <div style="display: flex; justify-content: center; width: 100%;">
-                <img src="data:image/png;base64,{{ plot_url5 }}" alt="graph">
+                <img id="plotImage5" src="" alt="Word Cloud">
             </div>
             <div style="display: flex; justify-content: center; width: 100%;">
-                <img src="data:image/png;base64,{{ plot_url6 }}" alt="graph">
+                <img id="plotImage6" src="" alt="Word Cloud">
             </div>
             <div style="display: flex; justify-content: center; width: 100%;">
-                <img src="data:image/png;base64,{{ plot_url7 }}" alt="graph">
+                <img id="plotImage7" src="" alt="Word Cloud">
+            </div>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img id="plotImage8" src="" alt="Word Cloud">
+            </div>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img id="plotImage9" src="" alt="Word Cloud">
             </div>
 
             <button id="closePopup" class="btn btn-secondary mt-3">Close</button>
         </div>
+
 
         <!-- Overlay for the popup -->
         <div id="overlay" class="overlay"></div>
@@ -167,6 +174,7 @@
         <!-- Results -->
         <div id="resultsContainer" class="results-container">
             {% if results %}
+                <strong>Total Results: {{ total_results }}</strong>
                 <ul id="resultsList" class="list-group">
                     {% for result in results %}
                         <li class="list-group-item" data-category="{{ result.category[0] if result.category else '' }}" data-date="{{ result.date[0] if result.date else '' }}">
@@ -188,14 +196,33 @@
                         {% if page > 1 %}
                             <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=page-1, results_per_page=results_per_page) }}">Previous</a></li>
                         {% endif %}
-                        {% for p in range(1, total_pages + 1) %}
-                            <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=p, results_per_page=results_per_page) }}">{{ p }}</a></li>
+                
+                        {% if start_page > 1 %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=1, results_per_page=results_per_page) }}">1</a></li>
+                            {% if start_page > 2 %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                        {% endif %}
+                
+                        {% for p in range(start_page, end_page + 1) %}
+                            <li class="page-item {% if p == page %}active{% endif %}">
+                                <a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=p, results_per_page=results_per_page) }}">{{ p }}</a>
+                            </li>
                         {% endfor %}
+                
+                        {% if end_page < total_pages %}
+                            {% if end_page < total_pages - 1 %}
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            {% endif %}
+                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=total_pages, results_per_page=results_per_page) }}">{{ total_pages }}</a></li>
+                        {% endif %}
+                
                         {% if page < total_pages %}
                             <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=page+1, results_per_page=results_per_page) }}">Next</a></li>
                         {% endif %}
                     </ul>
                 </nav>
+                
             {% else %}
                 <p class="mt-3">No results found.</p>
             {% endif %}
@@ -209,29 +236,16 @@
             document.getElementById('popup').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
 
-            // Set the image source to the base64-encoded plot
-            const plotUrl1 = "data:image/png;base64,{{ plot_url1 }}";
-            document.getElementById('plotImage1').src = plotUrl1;
-
-            // Set the image source to the base64-encoded plot
-            const plotUrl2 = "data:image/png;base64,{{ plot_url2 }}";
-            document.getElementById('plotImage2').src = plotUrl2;
-
-            const plotUrl3 = "data:image/png;base64,{{ plot_url3 }}";
-            document.getElementById('plotImage3').src = plotUrl3;
-
-            const plotUrl4 = "data:image/png;base64,{{ plot_url4 }}";
-            document.getElementById('plotImage4').src = plotUrl4;
-
-            const plotUrl5 = "data:image/png;base64,{{ plot_url5 }}";
-            document.getElementById('plotImage5').src = plotUrl5;
-
-            const plotUrl6 = "data:image/png;base64,{{ plot_url6 }}";
-            document.getElementById('plotImage6').src = plotUrl6;
-
-            const plotUrl7 = "data:image/png;base64,{{ plot_url7 }}";
-            document.getElementById('plotImage7').src = plotUrl7;
-
+            // Set the image source to the correct static path
+            document.getElementById('plotImage1').src = "/static/visual_cache/wordcloud.png";
+            document.getElementById('plotImage2').src = "/static/visual_cache/polarity_cloud.png";
+            document.getElementById('plotImage3').src = "/static/visual_cache/source_dist.png";
+            document.getElementById('plotImage4').src = "/static/visual_cache/sentiment_source.png";
+            document.getElementById('plotImage5').src = "/static/visual_cache/pop_sentiment.png";
+            document.getElementById('plotImage6').src = "/static/visual_cache/polarity_dist.png";
+            document.getElementById('plotImage7').src = "/static/visual_cache/industry_sentiment.png";
+            document.getElementById('plotImage8').src = "/static/visual_cache/heatmap.png";
+            document.getElementById('plotImage9').src = "/static/visual_cache/sector_trends.png";
         });
 
         document.getElementById('closePopup').addEventListener('click', function() {
@@ -244,5 +258,6 @@
             document.getElementById('overlay').style.display = 'none';
         });
     </script>
+
 </body>
 </html>
