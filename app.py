@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, session
 import pysolr
 import spacy
 import re
+import time
 from datetime import datetime
 from plotVisuals import (
     wordCloud, polarityDistribution, sentiment_distribution_by_industry,
@@ -29,7 +30,20 @@ ALL_CATEGORIES = [
     "Human Resources & Talent Management", "Agriculture & Environmental", "Consumer Goods & Services",
     "Sports, Fitness & Recreation", "Non-Profit & Social Services", "Aerospace & Defense"
 ]
-
+ALL_CONCEPTS = [
+    "Jobs & Careers",  
+    "AI Tech",  
+    "Job Market Trends",  
+    "Finance",  
+    "Mental Health",  
+    "Education Training",  
+    "Automation & Displacement",  
+    "Policy & Governance",  
+    "Recruitment Technology",  
+    "Remote & Gig Work",  
+    "Public Sentiment Discourse",  
+    "Tech Company Trends"  
+]
 # Helper functions
 def get_param(key, default=''):
     """Retrieve request parameter with default handling."""
@@ -60,6 +74,7 @@ def build_solr_params(request_args):
             f'polarity:({" OR ".join(get_list_param("polarity"))})',
             f'subjectivity:({" OR ".join(get_list_param("subjectivity"))})',
             f'category:({" OR ".join(get_list_param("category"))})',
+            f'concepts:{" OR ".join(get_list_param("concepts"))}' if request.args.getlist("concepts") else'',
             f'date: [{get_date_param("date_from")} TO {get_date_param("date_to")}]',
             f'popularity:[{get_param("popularity_min")} TO {get_param("popularity_max")}]'
         ],
@@ -95,12 +110,15 @@ def search():
         'sources': get_list_param('source'),
         'polarity': get_list_param('polarity'),
         'subjectivity': get_list_param('subjectivity'),
-        'category': get_list_param('category')
+        'category': get_list_param('category'),
+        'concepts': get_list_param('concepts')
     }
-    
     if session.get('search_params') != search_params:
         session['search_params'] = search_params
-        all_results = solr.search(q=params['q'], fq=params['filters'], sort=params['sort'], rows=13117).docs
+        #start_query = time.time() 
+        all_results = solr.search(q=params['q'], fq=params['filters'], sort=params['sort'], rows=12372).docs
+        #query_duration = time.time() - start_query 
+        #print(f"Query Time: {query_duration:.3f} seconds")
         generate_visualizations(all_results)
     
     # Retrieve paginated results
@@ -111,6 +129,12 @@ def search():
     
     for result in paginated_results.docs:
         result['date'][0] = datetime.strptime(result['date'][0], "%Y-%m-%dT%H:%M:%SZ").strftime("%d-%m-%Y")
+        result['category'] = ", ".join(result['category'])
+        if 'concepts' in result:
+            result['concepts'] = ", ".join(result['concepts'])
+        if 'aspects' in result:
+            result['aspects'] = ", ".join(result['aspects'])
+        
     return render_template(
         'search.html',
         query=request.args.get('q', ''),
@@ -120,10 +144,12 @@ def search():
         results_per_page=DEFAULT_RESULTS_PER_PAGE,
         total_pages=total_pages,
         selected_categories = get_list_param('category'),
+        selected_concepts = get_list_param('concepts'),
         total_results=total_results,
         start_page=max(1, current_page - PAGINATION_RANGE),
         end_page=min(total_pages, current_page + PAGINATION_RANGE),
-        all_categories=ALL_CATEGORIES
+        all_categories=ALL_CATEGORIES,
+        all_concepts=ALL_CONCEPTS
     )
 
 if __name__ == '__main__':
