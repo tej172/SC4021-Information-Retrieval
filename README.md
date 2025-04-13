@@ -122,59 +122,33 @@ set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot
 
 ## 2. Download and Unpack Solr
 
-1. **Download Solr:**  
-   Visit [Apache Solr Downloads](https://solr.apache.org/downloads.html).
+2. **Download Apache Solr**  
+   - Get the latest binary from:  
+     **[https://solr.apache.org/downloads.html](https://solr.apache.org/downloads.html)**  (e.g., `solr-9.8.1.zip`).
 
-2. **Unpack Solr**
-```bash
-tar -xvzf ./solr-9.8.0.tgz -C /home/user/solr
-```
+3. **Extract Solr into the Repo Folder**  
+   - Move the downloaded `solr-9.8.1.zip` into your repo folder (e.g., `Information_Retrieval/`).  
+   - Extract it there, resulting in:  
+     ```
+     Information_Retrieval/
+     ├── solr-9.8.1/  
+     ├── other_repo_files/  
+     └── ...
+     ```
+---
 
 ---
 
-## 3. Start Solr
-
-```cmd
-cd solr-9.8.0
-bin\solr.cmd start -p 8983
-```
-
-Open in browser:
-```
-http://localhost:8983/solr/
-```
-
----
-
-## 4. Create a Solr Core
-```cmd
-bin\solr.cmd create -c mycore
-```
-
----
-
-## 5. Navigation
-
-```cmd
-cd ..
-```
-
----
-
-## 6. Stop Solr
-```cmd
-bin\solr.cmd stop -p 8983
-```
-
----
-
-## 7. Example of Multiple Cores
-
-```cmd
-bin\solr.cmd create -c products_core
-bin\solr.cmd create -c customers_core
-bin\solr.cmd create -c orders_core
-```
+## **3: Application Start Up**
+1. Run the `start.py` file in the Repo:
+2. cmd print out:
+   ```cmd
+   JAVA_HOME is set to: ...\Programs\Eclipse Adoptium\jdk-21.0.6.7-hotspot
+   Starting Solr in the background...
+   Solr started with PID: 21132
+   To access Solr: http://localhost:8983/solr/
+   ```
+3. Open `http://localhost:8983/solr/` in a browser to confirm it’s running.
 
 ---
 
