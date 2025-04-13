@@ -1,6 +1,6 @@
 # SC4021 Info Ret.
 
-Good yoiutube for solr set up:https://www.youtube.com/watch?v=tJRwI_P290A (more updated) & https://www.youtube.com/watch?v=Zw4M4NGv-Rw (best but is for older 8.X.X versions so some commands dont work like to push json to the solr core)
+Youtube guide for solr set up: [Link](https://www.youtube.com/watch?v=tJRwI_P290A) (Updated) 
 
 ## Apache Solr Setup & Usage
 
@@ -102,6 +102,22 @@ Load new settings:
 source ~/.bashrc
 ```
 
+#### Windows
+##### **Option A: Temporary (Current Session Only)**
+```cmd
+set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot
+```
+
+##### **Option B: Permanent (Requires Admin for System-Wide)**
+- **For current user (no admin needed):**
+  ```cmd
+  setx JAVA_HOME "C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot"
+  ```
+- **For all users (admin required):**
+  ```cmd
+  setx JAVA_HOME "C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot" /M
+  ```
+  *(Remove quotes if they cause issues.)*
 ---
 
 ## 2. Download and Unpack Solr
