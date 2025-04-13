@@ -1,0 +1,109 @@
+body {
+    background-color: white;
+    color: black;
+}
+h2 {
+    color: black; /* Blue color for h2 */
+}
+
+.checkbox-container {
+    display: flex;
+    flex-direction: column;
+}
+.checkbox-container label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.scrollable-checkbox {
+    height: 120px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-top: 8px;
+}
+.range-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 8px;
+}
+.range-container input {
+    flex: 1;
+}
+.form-group {
+    margin-bottom: 16px;
+}
+.form-group label {
+    font-weight: 500;
+}
+.sort-container {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+.sort-container select {
+    flex: 1;
+}
+.apply-button {
+    margin-top: 32px;
+}
+.search-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.search-container input {
+    flex: 1;
+}
+.filter-section {
+     /* Darker background for filter section */
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+.results-container {
+    margin-top: 16px;
+}
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%; /* Wider popup for better graph display */
+    height: 80%; /* Taller popup for scrollable content */
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    overflow-y: auto; /* Make the popup scrollable */
+}
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+#popup img {
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}
+.list-group-item {
+    background-color: white; /* Darker background for list items */
+    color: black; /* Text color for list items */
+    border: 1px solid #444; /* Slightly lighter border for contrast */
+}
+.pagination .page-item .page-link {
+    background-color: white; /* Darker background for pagination */
+    color: #0D6EFD; /* Text color for pagination */
+}
+.pagination .page-item.active .page-link {
+    background-color: #0D6EFD; /* Active pagination item background */
+    color: white; /* Text color for pagination */
+}
