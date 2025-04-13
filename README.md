@@ -137,8 +137,6 @@ set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot
      ```
 ---
 
----
-
 ## **3: Application Start Up**
 1. Run the `start.py` file in the Repo:
 2. cmd print out:
