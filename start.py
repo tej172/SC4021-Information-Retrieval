@@ -41,7 +41,7 @@ def stop_solr():
     if java_home:
         print(f"JAVA_HOME is set to: {java_home}")
     else:
-        print("JAVA_HOME is not set. Please set it before proceeding.")
+        print("JAVA_HOME is not set. Please set it before proceeding.") 
     
     # Start Solr in the background using subprocess.Popen (non-blocking)
     try:

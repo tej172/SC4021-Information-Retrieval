@@ -1,5 +1,5 @@
 import requests
-
+import time
 # Solr URL
 solr_url = "http://localhost:8983/solr/mycore/update/json/docs"
 
@@ -12,8 +12,11 @@ with open(json_file, "r") as file:
 
 # Send the JSON data to Solr
 headers = {"Content-Type": "application/json"}
+start_indexing = time.time() 
 response = requests.post(solr_url, data=json_data, headers=headers)
+indexing_duration = time.time() - start_indexing
 
+print(f"Indexing Time: {indexing_duration:.3f} seconds")
 # Check if the import was successful
 if response.status_code == 200:
     print("JSON data imported successfully!")

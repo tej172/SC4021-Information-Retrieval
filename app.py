@@ -5,9 +5,9 @@ import re
 import time
 from datetime import datetime
 from plotVisuals import (
-    wordCloud, polarityDistribution, sentiment_distribution_by_industry,
-    industry_sentiment_heatmap, word_cloud_polarity, ai_sentiment_trends_across_sectors,
-    source_distribution, sentiment_by_source, popularity_vs_sentiment
+    wordCloud, word_cloud_polarity, polarityDistribution,
+    sentiment_distribution_by_industry, industry_sentiment_heatmap, aspect_sentiment_analysis,
+    source_distribution, sentiment_by_source, sentiment_over_time, popularity_vs_sentiment
 )
 
 # Initialize Flask app
@@ -78,7 +78,7 @@ def build_solr_params(request_args):
             f'date: [{get_date_param("date_from")} TO {get_date_param("date_to")}]',
             f'popularity:[{get_param("popularity_min")} TO {get_param("popularity_max")}]'
         ],
-        'sort': f'{get_param('sort_field', 'id_num')} {get_param('sort_order', 'asc')}',
+        'sort': f'{get_param("sort_field", "id_num")} {get_param("sort_order", "asc")}',
         'start': (int(request_args.get('page', 1)) - 1) * DEFAULT_RESULTS_PER_PAGE,
         'rows': DEFAULT_RESULTS_PER_PAGE
     }
@@ -86,9 +86,9 @@ def build_solr_params(request_args):
 def generate_visualizations(results):
     """Generate various sentiment-related visualizations."""
     visual_functions = [
-        wordCloud, word_cloud_polarity, source_distribution, sentiment_by_source,
-        popularity_vs_sentiment, polarityDistribution, sentiment_distribution_by_industry,
-        industry_sentiment_heatmap, ai_sentiment_trends_across_sectors
+        wordCloud, word_cloud_polarity, polarityDistribution,
+        sentiment_distribution_by_industry, industry_sentiment_heatmap, aspect_sentiment_analysis,
+        source_distribution, sentiment_by_source, sentiment_over_time, popularity_vs_sentiment
     ]
     for func in visual_functions:
         func(results)
@@ -115,10 +115,10 @@ def search():
     }
     if session.get('search_params') != search_params:
         session['search_params'] = search_params
-        #start_query = time.time() 
+        start_query = time.time() 
         all_results = solr.search(q=params['q'], fq=params['filters'], sort=params['sort'], rows=12372).docs
-        #query_duration = time.time() - start_query 
-        #print(f"Query Time: {query_duration:.3f} seconds")
+        query_duration = time.time() - start_query 
+        print(f"Query Time: {query_duration:.3f} seconds")
         generate_visualizations(all_results)
     
     # Retrieve paginated results

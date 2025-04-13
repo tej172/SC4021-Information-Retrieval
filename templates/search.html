@@ -72,9 +72,9 @@
                         <div class="form-group">
                             <label>Source:</label>
                             <div id="filterSource" class="checkbox-container">
-                                <label><input type="checkbox" name="source" value="reddit" {% if 'reddit' in sources %}checked{% endif %}> Reddit</label>
-                                <label><input type="checkbox" name="source" value="twitter" {% if 'twitter' in sources %}checked{% endif %}> Twitter</label>
-                                <label><input type="checkbox" name="source" value="linkedin" {% if 'linkedin' in sources %}checked{% endif %}> LinkedIn</label>
+                                <label><input type="checkbox" name="source" value="Reddit" {% if 'Reddit' in sources %}checked{% endif %}> Reddit</label>
+                                <label><input type="checkbox" name="source" value="Twitter" {% if 'Twitter' in sources %}checked{% endif %}> Twitter</label>
+                                <label><input type="checkbox" name="source" value="Linkedin" {% if 'Linkedin' in sources %}checked{% endif %}> LinkedIn</label>
                             </div>
                         </div>
                     </div>
@@ -84,9 +84,9 @@
                         <div class="form-group">
                             <label>Polarity:</label>
                             <div id="filterPolarity" class="checkbox-container">
-                                <label><input type="checkbox" name="polarity" value="positive" {% if 'positive' in polarity %}checked{% endif %}> Positive</label>
-                                <label><input type="checkbox" name="polarity" value="neutral" {% if 'neutral' in polarity %}checked{% endif %}> Neutral</label>
-                                <label><input type="checkbox" name="polarity" value="negative" {% if 'negative' in polarity %}checked{% endif %}> Negative</label>
+                                <label><input type="checkbox" name="polarity" value="Positive" {% if 'Positive' in polarity %}checked{% endif %}> Positive</label>
+                                <label><input type="checkbox" name="polarity" value="Neutral" {% if 'Neutral' in polarity %}checked{% endif %}> Neutral</label>
+                                <label><input type="checkbox" name="polarity" value="Negative" {% if 'Negative' in polarity %}checked{% endif %}> Negative</label>
                             </div>
                         </div>
                     </div>
@@ -96,16 +96,17 @@
                         <div class="form-group">
                             <label>Subjectivity:</label>
                             <div id="filterSubjectivity" class="checkbox-container">
-                                <label><input type="checkbox" name="subjectivity" value="opinionated" {% if 'opinionated' in subjectivity %}checked{% endif %}> Opinionated</label>
-                                <label><input type="checkbox" name="subjectivity" value="neutral" {% if 'neutral' in subjectivity %}checked{% endif %}> Neutral</label>
+                                <label><input type="checkbox" name="subjectivity" value="Opinionated" {% if 'Opinionated' in subjectivity %}checked{% endif %}> Opinionated</label>
+                                <label><input type="checkbox" name="subjectivity" value="Neutral" {% if 'Neutral' in subjectivity %}checked{% endif %}> Neutral</label>
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="row">
                     <!-- Scrollable Category Checkbox List -->
-                    <div class="col-md-8">
+                    <div class="col-md-6">
                         <div class="form-group">
                             <label>Category:</label>
                             <div id="filterCategory" class="scrollable-checkbox">
@@ -121,6 +122,24 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Concepts:</label>
+                            <div id="filterConcepts" class="scrollable-checkbox">
+                                <div class="checkbox-container">
+                                    {% for concept in all_concepts %}
+                                        <label>
+                                            <input type="checkbox" name="concepts" value="{{ concept }}" 
+                                                   {% if concept in selected_concepts %}checked{% endif %}>
+                                            {{ concept }}
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <!-- Button to trigger the popup -->
                 <div class="row">
@@ -163,6 +182,9 @@
             <div style="display: flex; justify-content: center; width: 100%;">
                 <img id="plotImage9" src="" alt="Word Cloud">
             </div>
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <img id="plotImage10" src="" alt="Word Cloud">
+            </div>
 
             <button id="closePopup" class="btn btn-secondary mt-3">Close</button>
         </div>
@@ -185,7 +207,10 @@
                             <small>Source: {{ result.source[0] }}</small><br>
                             <small>Polarity: {{ result.polarity[0] }}</small><br>
                             <small>Subjectivity: {{ result.subjectivity[0] }}</small><br>
-                            <small>Category: {{ result.category[0] }}</small>
+                            <small>Sarcasm: {{ result.sarcasm_label[0] }}</small><br>
+                            <small>Category: {{ result.category }}</small><br>
+                            <small>Concepts: {{ result.concepts }}</small><br>
+                            <small>Aspects: {{ result.aspects }}</small><br>
                         </li>
                     {% endfor %}
                 </ul>
@@ -194,11 +219,11 @@
                 <nav aria-label="Page navigation">
                     <ul class="pagination">
                         {% if page > 1 %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=page-1, results_per_page=results_per_page) }}">Previous</a></li>
+                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, selected_concepts=selected_concepts, page=page-1, results_per_page=results_per_page) }}">Previous</a></li>
                         {% endif %}
                 
                         {% if start_page > 1 %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=1, results_per_page=results_per_page) }}">1</a></li>
+                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, selected_concepts=selected_concepts, page=1, results_per_page=results_per_page) }}">1</a></li>
                             {% if start_page > 2 %}
                                 <li class="page-item disabled"><span class="page-link">...</span></li>
                             {% endif %}
@@ -206,7 +231,7 @@
                 
                         {% for p in range(start_page, end_page + 1) %}
                             <li class="page-item {% if p == page %}active{% endif %}">
-                                <a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=p, results_per_page=results_per_page) }}">{{ p }}</a>
+                                <a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, selected_concepts=selected_concepts, page=p, results_per_page=results_per_page) }}">{{ p }}</a>
                             </li>
                         {% endfor %}
                 
@@ -214,11 +239,11 @@
                             {% if end_page < total_pages - 1 %}
                                 <li class="page-item disabled"><span class="page-link">...</span></li>
                             {% endif %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=total_pages, results_per_page=results_per_page) }}">{{ total_pages }}</a></li>
+                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, selected_concepts=selected_concepts, page=total_pages, results_per_page=results_per_page) }}">{{ total_pages }}</a></li>
                         {% endif %}
                 
                         {% if page < total_pages %}
-                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, page=page+1, results_per_page=results_per_page) }}">Next</a></li>
+                            <li class="page-item"><a class="page-link" href="{{ url_for('search', q=query, date_from=date_from, date_to=date_to, popularity_min=popularity_min, popularity_max=popularity_max, sort_field=sort_field, sort_order=sort_order, sources=sources, polarities=polarities, subjectivities=subjectivities, selected_categories=selected_categories, selected_concepts=selected_concepts, page=page+1, results_per_page=results_per_page) }}">Next</a></li>
                         {% endif %}
                     </ul>
                 </nav>
@@ -239,13 +264,14 @@
             // Set the image source to the correct static path
             document.getElementById('plotImage1').src = "/static/visual_cache/wordcloud.png";
             document.getElementById('plotImage2').src = "/static/visual_cache/polarity_cloud.png";
-            document.getElementById('plotImage3').src = "/static/visual_cache/source_dist.png";
-            document.getElementById('plotImage4').src = "/static/visual_cache/sentiment_source.png";
-            document.getElementById('plotImage5').src = "/static/visual_cache/pop_sentiment.png";
-            document.getElementById('plotImage6').src = "/static/visual_cache/polarity_dist.png";
-            document.getElementById('plotImage7').src = "/static/visual_cache/industry_sentiment.png";
-            document.getElementById('plotImage8').src = "/static/visual_cache/heatmap.png";
-            document.getElementById('plotImage9').src = "/static/visual_cache/sector_trends.png";
+            document.getElementById('plotImage3').src = "/static/visual_cache/polarity_dist.png";
+            document.getElementById('plotImage4').src = "/static/visual_cache/industry_sentiment.png";
+            document.getElementById('plotImage5').src = "/static/visual_cache/industry_heatmap.png";
+            document.getElementById('plotImage6').src = "/static/visual_cache/aspect_sentiment.png";
+            document.getElementById('plotImage7').src = "/static/visual_cache/source_dist.png";
+            document.getElementById('plotImage8').src = "/static/visual_cache/sentiment_source.png";
+            document.getElementById('plotImage9').src = "/static/visual_cache/sentiment_over_time.png";
+            document.getElementById('plotImage10').src = "/static/visual_cache/pop_sentiment.png";
         });
 
         document.getElementById('closePopup').addEventListener('click', function() {
