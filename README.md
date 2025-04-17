@@ -127,12 +127,13 @@ set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot
      **[https://solr.apache.org/downloads.html](https://solr.apache.org/downloads.html)**  (e.g., `solr-9.8.1.zip`).
 
 3. **Extract Solr into the Repo Folder**  
-   - Move the downloaded `solr-9.8.1.zip` into your repo folder (e.g., `Information_Retrieval/`).  
+   - Move the downloaded `solr-9.8.1.zip` into your repo folder (e.g., `SC4021-Information-Retrieval-main/`).  
    - Extract it there, resulting in:  
      ```
-     Information_Retrieval/
+     SC4021-Information-Retrieval-main/
      ├── solr-9.8.1/  
      ├── other_repo_files/  
+     ├── searchEngine/  
      └── ...
      ```
 ---
