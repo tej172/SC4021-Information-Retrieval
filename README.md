@@ -148,6 +148,12 @@ set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-11.0.18.10-hotspot
    To access Solr: http://localhost:8983/solr/
    ```
 3. Open `http://localhost:8983/solr/` in a browser to confirm it’s running.
-
+4. If no data upon startup, run the `importJson.py` file in the Repo:
+5. cmd print out:
+   ```cmd
+   JSON data imported successfully!
+   Changes committed successfully!
+   ```
+6. If error of no core: run the `create_core()` function in the start.py then proceed to Step 4 to import the data to the core 
 ---
 
