@@ -142,3 +142,38 @@ for index, post in enumerate(data):
 with open(filename, 'w', encoding='utf-8') as file:
     json.dump(data, file, indent=4)
 print('Done')
+
+# === Process full dataset ===
+start_time = time.time()
+category_counter = Counter()
+masking_changed_count = 0
+
+for post in data:
+    text = post["text"]
+    original = classify_industry(text)
+    final = process_text(text)
+    post["category"] = final
+    for cat in final:
+        category_counter[cat] += 1
+    if set(original) != set(final):
+        masking_changed_count += 1
+
+end_time = time.time()
+
+# === Performance metrics ===
+elapsed = end_time - start_time
+avg_per_doc = elapsed / len(data)
+throughput = len(data) / elapsed
+masking_effect = (masking_changed_count / len(data)) * 100
+
+# === Output ===
+print(f"\nProcessed full dataset ({len(data)} records)")
+print(" PERFORMANCE METRICS")
+print(f"Total Time: {elapsed:.2f} sec")
+print(f"Avg Time per Document: {avg_per_doc:.4f} sec")
+print(f"Throughput: {throughput:.2f} docs/sec")
+print(f"Masking changed output in {masking_changed_count} documents ({masking_effect:.2f}%)")
+
+print("\n📋 Top Predicted Categories:")
+for label, count in category_counter.most_common(10):
+    print(f"{label}: {count}")
