@@ -6,8 +6,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 # LinkedIn Credentials (USE ENV VARIABLES FOR SECURITY)
-USERNAME = "fyp2332@gmail.com"
-PASSWORD = "Mermaid02!"
+USERNAME = config['Link']['username']
+PASSWORD = config['Link']['password']
 
 # Expanded list of topics
 TOPICS = [
